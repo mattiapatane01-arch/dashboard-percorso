@@ -1,0 +1,167 @@
+/* ── Hero — dark, centrato, sticker fluttuanti ──────────── */
+
+/* ── Keyframes ─────────────────────────────────────────── */
+
+@keyframes sticker-from-left {
+  0%   { transform: translateY(-50%) translateX(-80px) rotate(-8deg); opacity: 0; }
+  70%  { transform: translateY(-50%) translateX(4px) rotate(-8deg); opacity: 1; }
+  100% { transform: translateY(-50%) translateX(0) rotate(-8deg); opacity: 1; }
+}
+
+@keyframes sticker-from-right {
+  0%   { transform: translateY(-50%) translateX(80px) rotate(8deg); opacity: 0; }
+  70%  { transform: translateY(-50%) translateX(-4px) rotate(8deg); opacity: 1; }
+  100% { transform: translateY(-50%) translateX(0) rotate(8deg); opacity: 1; }
+}
+
+@keyframes float-left {
+  0%, 100% { transform: translateY(-50%) rotate(-8deg); }
+  50%       { transform: translateY(calc(-50% - 12px)) rotate(-8deg); }
+}
+
+@keyframes float-right {
+  0%, 100% { transform: translateY(-50%) rotate(8deg); }
+  50%       { transform: translateY(calc(-50% - 12px)) rotate(8deg); }
+}
+
+/* ── Hero section ────────────────────────────────────────── */
+
+#hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 24px;
+  background-color: var(--black);
+}
+
+@media (min-width: 768px) {
+  #hero { padding: 60px 220px; }
+}
+
+/* ── Sticker ─────────────────────────────────────────────── */
+
+.hero__sticker {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+}
+
+.hero__sticker--left {
+  left: 0;
+  top: 50%;
+  width: 180px;
+  animation:
+    sticker-from-left 0.8s ease-out 0.3s forwards,
+    float-left 3s ease-in-out 1.1s infinite;
+}
+
+.hero__sticker--right {
+  right: 0;
+  top: 50%;
+  width: 180px;
+  animation:
+    sticker-from-right 0.8s ease-out 0.6s forwards,
+    float-right 3s ease-in-out 2.6s infinite;
+}
+
+/* ── Testo centrato — z-index sopra sticker ─────────────── */
+
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  width: 100%;
+  text-align: center;
+}
+
+.hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Nome — Archivo Black, bianco, ombra gialla, una sola riga */
+.hero__name {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(3.5rem, 11vw, 8rem);
+  font-weight: 400;
+  color: var(--white);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-shadow: 4px 4px 0 var(--yellow);
+}
+
+/* Tagline — max 2 righe */
+.hero__tagline {
+  font-size: clamp(1.3rem, 4vw, 1.9rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.5;
+  max-width: 900px;
+}
+
+/* Description */
+.hero__description {
+  font-size: clamp(0.9375rem, 2.5vw, 1.0625rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.7;
+  max-width: 760px;
+}
+
+/* ── Desktop: sticker più distanti ─────────────────────── */
+@media (min-width: 768px) {
+  .hero__sticker--left  { left: 20px; width: 200px; }
+  .hero__sticker--right { right: 20px; width: 200px; }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hero__sticker--left {
+    width: 120px;
+    left: 8px;
+  }
+  .hero__sticker--right {
+    width: 120px;
+    right: 8px;
+  }
+  .hero__inner {
+    padding: 0 140px;
+  }
+}
+
+@media (max-width: 767px) {
+
+  #hero {
+    padding: 100px 24px 60px;
+  }
+
+  .hero__name {
+    font-size: clamp(2.2rem, 11vw, 3.5rem);
+  }
+
+  .hero__sticker--left {
+    width: 80px;
+    left: 4px;
+    top: 16px;
+  }
+
+  .hero__sticker--right {
+    width: 80px;
+    right: 4px;
+    top: 16px;
+  }
+
+  .hero__tagline {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+  }
+
+  .hero__description {
+    font-size: 0.875rem;
+  }
+
+}

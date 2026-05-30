@@ -1,0 +1,137 @@
+/* ── Globe section — Mapbox GL JS v3 Polarsteps-style ──────────────────── */
+
+#mid {
+  /* background gestito da .stars-bg su index.html */
+  padding: 48px 0 56px;
+}
+
+/* Globe column wrapper */
+#globe-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Mapbox container — isolato dal reflow del DOM vicino */
+#globe-container {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  will-change: transform;
+  transform: translateZ(0);
+  isolation: isolate;
+}
+
+/* Mapbox canvas riempie il container — sfondo nero per fusione stelle */
+#globe-container .mapboxgl-canvas-container,
+#globe-container .mapboxgl-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  background: var(--black) !important;
+}
+
+#globe-container .mapboxgl-map {
+  background: var(--black) !important;
+}
+
+/* Nasconde controlli Mapbox che appaiono nella sezione */
+#globe-container .mapboxgl-ctrl-attrib,
+#globe-container .mapboxgl-ctrl-logo {
+  display: none !important;
+}
+
+/* ── Marker circolari HTML (Polarsteps-style) ────────────────────── */
+
+.globe-marker {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.globe-marker img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--white);
+  box-shadow: 2px 2px 0 var(--black), 0 0 0 2px rgba(255,214,0,0.35);
+  object-fit: cover;
+  display: block;
+  transition: transform 0.15s ease;
+}
+
+.globe-marker img:hover {
+  transform: scale(1.12);
+}
+
+.globe-marker--van img {
+  width: 44px;
+  height: 44px;
+  border-color: var(--yellow);
+  box-shadow: 3px 3px 0 var(--black), 0 0 0 3px rgba(255,214,0,0.55);
+}
+
+/* Dot fallback se immagine non esiste */
+.globe-marker--dot::after {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 2px solid var(--black);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+}
+
+.globe-marker--dot.globe-marker--van::after {
+  width: 18px;
+  height: 18px;
+  background: var(--yellow);
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px rgba(255,214,0,0.5);
+}
+
+/* ── Tooltip ─────────────────────────────────────────────────────── */
+
+.globe-tooltip {
+  position: absolute;
+  background: var(--black);
+  color: var(--white);
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 20;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.globe-tooltip[hidden] { display: none; }
+
+.globe-tooltip strong {
+  font-weight: 700;
+  color: var(--yellow);
+  font-size: 1rem;
+}
+
+/* Hint drag — bianco su sfondo scuro */
+.globe-hint {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.40);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ── Desktop ─────────────────────────────────────────────────────── */
+
+@media (min-width: 768px) {
+  #mid { padding: 64px 0 72px; }
+  #globe-container { max-width: 480px; }
+}

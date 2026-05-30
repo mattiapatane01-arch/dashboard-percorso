@@ -1,0 +1,78 @@
+/* Reset + CSS Variables */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Palette */
+  --yellow: #FFD600;
+  --black:  #0A0A0A;
+  --white:  #FFFFFF;
+  --bg:     #FFFDF0;
+  --green:  #00C853;
+  --red:    #FF3D00;
+
+  /* Design tokens */
+  --shadow:  4px 4px 0 var(--black);
+  --shadow-sm: 3px 3px 0 var(--black);
+  --border:  2px solid var(--black);
+  --radius:  6px;
+
+  /* Typography */
+  --font-display: 'Inter', sans-serif;
+  --font:         'Inter', sans-serif;
+  --font-accent:  'Fredoka', sans-serif; /* solo per label XP bars */
+}
+
+html {
+  font-family: var(--font);
+  font-size: 16px;
+  background-color: var(--black);
+  color: var(--white);
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img, svg, canvas {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font);
+  border: none;
+  background: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Stelle generate via JS (createStars) — solo sfondo nero */
+.stars-bg {
+  background-color: var(--black);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1; }
+}

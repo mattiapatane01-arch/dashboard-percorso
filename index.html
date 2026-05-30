@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mattia Patanè — Dashboard</title>
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Mapbox GL JS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+
+  <!-- CSS base -->
+  <link rel="stylesheet" href="assets/css/reset.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+
+  <!-- CSS sezioni -->
+  <link rel="stylesheet" href="assets/css/sections/hero.css" />
+  <link rel="stylesheet" href="assets/css/sections/globe.css" />
+  <link rel="stylesheet" href="assets/css/sections/stats.css" />
+  <link rel="stylesheet" href="assets/css/sections/telegram.css" />
+  <link rel="stylesheet" href="assets/css/sections/materials.css" />
+  <link rel="stylesheet" href="assets/css/sections/costruzione.css" />
+  <link rel="stylesheet" href="assets/css/sections/social.css" />
+</head>
+<body>
+
+  <!-- 1. Hero -->
+  <section id="hero">
+    <!-- Sticker fluttuanti -->
+    <img src="assets/img/graficouno.png"
+         class="hero__sticker hero__sticker--left"
+         alt="" aria-hidden="true"
+         onerror="this.style.display='none'">
+    <img src="assets/img/macchinauno.png"
+         class="hero__sticker hero__sticker--right"
+         alt="" aria-hidden="true"
+         onerror="this.style.display='none'">
+
+    <!-- Testo centrato -->
+    <div class="hero__inner">
+      <div class="hero__text">
+        <h1 class="hero__name" id="hero-name"></h1>
+        <p id="hero-tagline" class="hero__tagline"></p>
+        <p id="hero-description" class="hero__description"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2+3+4. Globe + Stats grid -->
+  <section id="mid" class="stars-bg">
+    <div class="container">
+      <div class="mid-grid">
+        <div id="stats-expenses"></div>
+        <div id="globe-wrapper">
+          <div
+            id="globe-container"
+            role="img"
+            aria-label="Mappa interattiva del percorso in Australia"
+          >
+            <!-- Mapbox GL JS canvas + marker div inseriti via JS -->
+            <div id="globe-tooltip" class="globe-tooltip" aria-live="polite" hidden>
+              <strong id="globe-tooltip-city"></strong>
+              <span id="globe-tooltip-detail"></span>
+            </div>
+          </div>
+          <p class="globe-hint">
+            <span aria-hidden="true">↔</span>
+            <span>Trascina per ruotare · Tocca per info</span>
+          </p>
+        </div>
+        <div id="stats-systems"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Telegram CTA — card gialla -->
+  <section id="telegram" class="stars-bg">
+    <div class="container">
+      <div class="telegram__card">
+        <div class="telegram__counter-wrap">
+          <img src="assets/img/telegram-people.png"
+               alt=""
+               class="telegram__people-img"
+               aria-hidden="true"
+               onerror="this.style.display='none'">
+          <span class="telegram__count" id="telegram-count">0</span>
+          <span class="telegram__counter-label">nel mio gruppo privato</span>
+        </div>
+        <p class="telegram__pitch">
+          Nel mio gruppo privato mostro tutto nel dettaglio — ogni settimana.
+        </p>
+        <a id="telegram-btn" class="telegram__btn" href="#" target="_blank" rel="noopener noreferrer">
+          Entra nel gruppo →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6+7. Costruzione sistema + Materiali PDF (side by side su desktop) -->
+  <section id="build-and-materials" class="stars-bg">
+    <div class="container">
+      <div class="bam-grid">
+
+        <!-- Sinistra: Costruzione -->
+        <div class="bam-col bam-col--build">
+          <h2 class="section-title">Sistema 1 — in costruzione</h2>
+          <div class="build-progress">
+            <div class="build-progress__label">
+              <span>Progresso</span>
+              <span class="build-progress__pct" id="build-pct">25%</span>
+            </div>
+            <div class="build-progress__track">
+              <div class="build-progress__fill" id="build-fill"></div>
+            </div>
+          </div>
+          <p class="build-desc">
+            Sto costruendo il primo sistema di investimento automatizzato testato con soldi reali.
+            L'obiettivo è un sistema che opera in autonomia su un capitale di 10.000€.
+            Aggiorno il progresso ogni domenica.
+          </p>
+        </div>
+
+        <!-- Destra: Materiali -->
+        <div class="bam-col bam-col--materials">
+          <h2 class="section-title">Materiali gratuiti</h2>
+          <p class="materials-subtitle">
+            Qui ti lascio quello che imparo durante il percorso
+          </p>
+          <div id="materials-grid" class="materials-grid"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Social links -->
+  <section id="social" class="stars-bg">
+    <div class="container">
+      <div id="social-list" class="social-list"></div>
+    </div>
+  </section>
+
+  <!-- Mapbox GL JS -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+  <!-- CountUp.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
+
+  <!-- JS -->
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>

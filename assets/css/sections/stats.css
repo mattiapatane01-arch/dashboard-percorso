@@ -1,0 +1,294 @@
+/* ── Stats: Spese XP + Sistemi investimento — dark theme ─ */
+
+/* Colonna generica */
+.stats-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Titolo colonna — Inter 900 giallo */
+.stats-col__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  font-weight: 900;
+  color: var(--yellow);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  margin-bottom: 4px;
+}
+
+/* ── Spese XP bars ──────────────────────── */
+
+.xp-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.xp-bar {
+  position: relative;
+  cursor: pointer;
+  background: #111111;
+  border: 2px solid var(--yellow);
+  box-shadow: 4px 4px 0 var(--yellow);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.xp-bar__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* XP bar labels: Fredoka (--font-accent) */
+.xp-bar__emoji {
+  font-family: var(--font-accent);
+  font-size: 1.125rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.xp-bar__label {
+  font-family: var(--font-accent);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--white);
+  flex: 1;
+}
+
+.xp-bar__amount {
+  font-family: var(--font-accent);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--white);
+  white-space: nowrap;
+}
+
+.xp-bar__track {
+  height: 20px;
+  background: #1a1a1a;
+  border: 1.5px solid rgba(255, 214, 0, 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.xp-bar__fill {
+  height: 100%;
+  background: var(--yellow);
+  border-radius: 2px;
+  transition: width 1.2s ease-out;
+  min-width: 0;
+}
+
+/* Card totale spese */
+.expenses-total {
+  background: #111111;
+  border: 2px solid var(--yellow);
+  box-shadow: 4px 4px 0 var(--yellow);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.expenses-total__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.expenses-total__amount {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--yellow);
+}
+
+/* Tooltip spese */
+.xp-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--black);
+  color: var(--white);
+  border: 2px solid var(--yellow);
+  box-shadow: 3px 3px 0 var(--yellow);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 20;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.xp-tooltip[hidden] { display: none; }
+
+/* Colori tooltip spese: up = spesa aumentata = rosso; down = spesa calata = verde */
+.tip--up   { color: var(--red); }
+.tip--down { color: var(--green); }
+
+/* Colori tooltip sistemi: profit = verde; loss = rosso */
+.tip--profit { color: var(--green) !important; }
+.tip--loss   { color: var(--red)   !important; }
+
+/* ── Sistemi investimento ───────────────── */
+
+/* Wrapper totale + avatar affiancati */
+.systems-total-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.systems-total-wrap .systems-total {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.systems-avatar {
+  width: 120px;
+  height: auto;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+/* Card totale capitale — contain previene reflow verso l'esterno (canvas Mapbox) */
+.systems-total {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 2px solid var(--yellow);
+  box-shadow: 4px 4px 0 var(--yellow);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  background: #111111;
+  color: var(--white);
+  margin-bottom: 4px;
+  contain: layout style;
+}
+
+.systems-total__label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.systems-total__value {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 900;
+  white-space: nowrap;
+  color: var(--yellow);
+}
+
+/* Badge P&L totale */
+.systems-total__pnl { font-size: 0.9375rem; font-weight: 700; margin-top: 4px; }
+.systems-total__pnl--green { color: var(--green); }
+.systems-total__pnl--red   { color: var(--red); }
+
+/* Card sistema */
+.system-card {
+  position: relative;
+  border: 2px solid var(--yellow);
+  box-shadow: 4px 4px 0 var(--yellow);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: #111111;
+  cursor: pointer;
+}
+
+.system-card__header {
+  margin-bottom: 10px;
+}
+
+.system-card__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--white);
+}
+
+/* Barra */
+.system-card__track {
+  height: 16px;
+  background: #1a1a1a;
+  border: 1.5px solid rgba(255, 214, 0, 0.4);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.system-card__base {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 214, 0, 0.12);
+}
+
+.system-card__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transition: width 1.2s ease-out;
+}
+
+.system-card__overlay--green { background: var(--green); }
+.system-card__overlay--red   { background: var(--red); }
+
+/* Riga capitale + badge PnL inline */
+.system-card__amount-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.system-card__amount {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Badge P&L inline */
+.system-card__pnl {
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.system-card__pnl--green { color: var(--green); }
+.system-card__pnl--red   { color: var(--red); }
+
+/* Tooltip sistema */
+.system-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--black);
+  color: var(--white);
+  border: 2px solid var(--yellow);
+  box-shadow: 3px 3px 0 var(--yellow);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.system-tooltip[hidden] { display: none; }

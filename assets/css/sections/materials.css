@@ -1,0 +1,84 @@
+/* ── Materiali scaricabili — dark theme ──────────────── */
+
+.materials-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Card PDF dark */
+.material-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 2px dashed var(--yellow);
+  border-radius: var(--radius);
+  padding: 20px;
+  background: #111111;
+  transition: transform 0.08s ease;
+}
+
+.material-card:hover {
+  transform: translate(2px, 2px);
+}
+
+.material-card__title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.material-card__desc {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.material-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--black);
+  background: var(--yellow);
+  border: 2px solid var(--yellow);
+  padding: 6px 14px;
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 rgba(255, 214, 0, 0.5);
+  align-self: flex-start;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.material-card__link:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 rgba(255, 214, 0, 0.5);
+}
+
+/* Placeholder vuoto */
+.material-card--empty {
+  border-color: rgba(255, 214, 0, 0.35);
+  background: transparent;
+  opacity: 0.5;
+}
+
+.material-card--empty .material-card__title {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.material-card--empty .material-card__desc {
+  color: rgba(255, 255, 255, 0.40);
+}
+
+.material-card--empty:hover {
+  transform: none;
+}
+
+/* ── Desktop ────────────────────────────── */
+@media (min-width: 768px) {
+  .materials-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
