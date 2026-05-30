@@ -2,14 +2,6 @@
  * stats.js — Spese settimanali XP bars + Sistemi investimento (dark theme v3)
  */
 
-// ── CountUp helper ────────────────────────────────────────────────────────────
-
-function getCountUpCtor() {
-  if (typeof CountUp === 'function') return CountUp;
-  if (typeof countUp !== 'undefined') return countUp.CountUp;
-  return null;
-}
-
 // ── Spese ────────────────────────────────────────────────────────────────────
 
 export function renderExpenses(expenses) {
@@ -181,41 +173,10 @@ export function renderSystems(systems) {
 
   container.appendChild(col);
 
-  // ── CountUp: totale capitale + PnL badge ──
-  const CountUpCtor = getCountUpCtor();
-  if (CountUpCtor) {
-    const capitalObserver = new IntersectionObserver(entries => {
-      if (!entries[0].isIntersecting) return;
-
-      new CountUpCtor('systems-total-value', totalCapital, {
-        duration: 2,
-        separator: '.',
-        decimal: ',',
-        suffix: ` ${currency}`,
-      }).start();
-
-      if (pnlBadgeEl && totalPnL !== 0) {
-        const prefix = totalPnL > 0 ? '+' : '-';
-        new CountUpCtor('systems-total-pnl', Math.abs(totalPnL), {
-          duration: 1.5,
-          separator: '.',
-          decimal: ',',
-          prefix,
-          suffix: ` ${currency}`,
-        }).start();
-      }
-
-      capitalObserver.disconnect();
-      // Forza il canvas Mapbox a ridisegnarsi dopo il reflow del CountUp
-      document.dispatchEvent(new CustomEvent('globe:resize'));
-    }, { threshold: 0.5 });
-
-    capitalObserver.observe(container);
-  } else {
-    totalValue.textContent = `${totalCapital.toLocaleString('it-IT')} ${currency}`;
-    if (pnlBadgeEl) {
-      pnlBadgeEl.textContent = `${totalPnL > 0 ? '+' : ''}${totalPnL} ${currency}`;
-    }
+  // Capitale totale — numero statico (CountUp rimosso: causava reflow su canvas Mapbox)
+  totalValue.textContent = `${totalCapital.toLocaleString('it-IT')} ${currency}`;
+  if (pnlBadgeEl) {
+    pnlBadgeEl.textContent = `${totalPnL > 0 ? '+' : ''}${totalPnL} ${currency}`;
   }
 }
 

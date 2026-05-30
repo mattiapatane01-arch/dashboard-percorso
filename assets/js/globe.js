@@ -151,8 +151,4 @@ export function initGlobe(data) {
     if (!container.contains(e.target)) hideTooltip();
   });
 
-  // Evento custom 'globe:resize' — chiamato da stats.js dopo CountUp
-  document.addEventListener('globe:resize', () => {
-    if (map) setTimeout(() => map.resize(), 50);
-  });
 }
