@@ -3,7 +3,7 @@
  * Satellite texture, space fog, stars, scia rossa tratteggiata, marker HTML circolari
  */
 
-const TOKEN = 'pk.eyJ1IjoibWF0dGlhcGF0YW5lIiwiYSI6ImNtcHFrYzhqajBhY2QzeHE3M2lxODV6c2MifQ.ubuDyybPhOihPoVU4LI2rg';
+const TOKEN = 'pk.eyJ1IjoibWF0dGlhcGF0YW5lIiwiYSI6ImNtcHRmYjB5bzFpYmsydW9xaXZqaWVzY2oifQ.KZDrj49RSD_j9ZeqcMDU2A';
 
 let map       = null;
 let appData   = null;
