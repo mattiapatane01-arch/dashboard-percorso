@@ -1,6 +1,6 @@
 {
   "meta": {
-    "lastUpdated": "2026-05-30",
+    "lastUpdated": "2026-05-31",
     "version": "1.0"
   },
   "hero": {
@@ -10,40 +10,56 @@
   },
   "map": {
     "waypoints": [
-      { "id": "brisbane",      "name": "Brisbane",       "lat": -27.47, "lng": 153.02, "x": 0, "y": 0, "date": "2025-10-01", "note": "Partenza" },
-      { "id": "goldcoast",     "name": "Gold Coast",     "lat": -28.00, "lng": 153.43, "x": 0, "y": 0, "date": "2025-10-05", "note": "" },
-      { "id": "byronbay",      "name": "Byron Bay",      "lat": -28.64, "lng": 153.61, "x": 0, "y": 0, "date": "2025-10-10", "note": "" },
-      { "id": "coffsharbour",  "name": "Coffs Harbour",  "lat": -30.30, "lng": 153.11, "x": 0, "y": 0, "date": "2025-10-18", "note": "" },
-      { "id": "portmacquarie", "name": "Port Macquarie", "lat": -31.43, "lng": 152.91, "x": 0, "y": 0, "date": "2025-10-25", "note": "" },
-      { "id": "newcastle",     "name": "Newcastle",      "lat": -32.92, "lng": 151.78, "x": 0, "y": 0, "date": "2025-11-02", "note": "" },
-      { "id": "sydney",        "name": "Sydney",         "lat": -33.87, "lng": 151.21, "x": 0, "y": 0, "date": "2025-11-10", "note": "" },
-      { "id": "wollongong",    "name": "Wollongong",     "lat": -34.42, "lng": 150.89, "x": 0, "y": 0, "date": "2025-11-20", "note": "" },
-      { "id": "batemansbay",   "name": "Batemans Bay",   "lat": -35.71, "lng": 150.18, "x": 0, "y": 0, "date": "2025-11-28", "note": "" },
-      { "id": "eden",          "name": "Eden",           "lat": -37.07, "lng": 149.90, "x": 0, "y": 0, "date": "2025-12-05", "note": "" },
-      { "id": "lakesentrance", "name": "Lakes Entrance", "lat": -37.88, "lng": 147.98, "x": 0, "y": 0, "date": "2025-12-12", "note": "" },
-      { "id": "melbourne",     "name": "Melbourne",      "lat": -37.81, "lng": 144.96, "x": 0, "y": 0, "date": "2026-01-15", "note": "Posizione attuale" }
+      { "id": "brisbane",      "name": "Brisbane",       "lat": -27.47, "lng": 153.02, "x": 0, "y": 0, "date": "2026-04-05", "note": "Partenza" },
+      { "id": "goldcoast",     "name": "Gold Coast",     "lat": -28.00, "lng": 153.43, "x": 0, "y": 0, "date": "2026-04-10", "note": "" },
+      { "id": "byronbay",      "name": "Byron Bay",      "lat": -28.64, "lng": 153.61, "x": 0, "y": 0, "date": "2026-04-15", "note": "" },
+      { "id": "coffsharbour",  "name": "Coffs Harbour",  "lat": -30.30, "lng": 153.11, "x": 0, "y": 0, "date": "2026-04-22", "note": "" },
+      { "id": "portmacquarie", "name": "Port Macquarie", "lat": -31.43, "lng": 152.91, "x": 0, "y": 0, "date": "2026-04-28", "note": "" },
+      { "id": "newcastle",     "name": "Newcastle",      "lat": -32.92, "lng": 151.78, "x": 0, "y": 0, "date": "2026-05-04", "note": "" },
+      { "id": "sydney",        "name": "Sydney",         "lat": -33.87, "lng": 151.21, "x": 0, "y": 0, "date": "2026-05-10", "note": "" },
+      { "id": "wollongong",    "name": "Wollongong",     "lat": -34.42, "lng": 150.89, "x": 0, "y": 0, "date": "2026-05-17", "note": "" },
+      { "id": "batemansbay",   "name": "Batemans Bay",   "lat": -35.71, "lng": 150.18, "x": 0, "y": 0, "date": "2026-05-21", "note": "" },
+      { "id": "eden",          "name": "Eden",           "lat": -37.07, "lng": 149.90, "x": 0, "y": 0, "date": "2026-05-25", "note": "" },
+      { "id": "lakesentrance", "name": "Lakes Entrance", "lat": -37.88, "lng": 147.98, "x": 0, "y": 0, "date": "2026-05-28", "note": "" },
+      { "id": "melbourne",     "name": "Melbourne",      "lat": -37.81, "lng": 144.96, "x": 0, "y": 0, "date": "2026-05-31", "note": "Posizione attuale" }
     ]
   },
   "systems": [
-    { "id": "conservativo",    "name": "Sistema Conservativo",     "capital": 2000, "weeklyPnL": -30, "currency": "EUR" },
-    { "id": "alto1",           "name": "Strumento Alto Rischio 1", "capital": 4000, "weeklyPnL": 277, "currency": "EUR" },
-    { "id": "alto2",           "name": "Strumento Alto Rischio 2", "capital": 3500, "weeklyPnL": 266, "currency": "EUR" },
-    { "id": "superaggressivo", "name": "Super Aggressivo",         "capital": 500,  "weeklyPnL": 0,   "currency": "EUR" }
+    { "id": "conservativo",    "name": "Sistema Conservativo",     "capital": 1740, "weeklyPnL": -21,  "currency": "EUR" },
+    { "id": "alto1",           "name": "Strumento Alto Rischio 1", "capital": 4156, "weeklyPnL": 320,  "currency": "EUR" },
+    { "id": "alto2",           "name": "Strumento Alto Rischio 2", "capital": 3509, "weeklyPnL": -15,  "currency": "EUR" },
+    { "id": "superaggressivo", "name": "Super Aggressivo",         "capital": 925,  "weeklyPnL": 425,  "currency": "EUR" }
   ],
   "vanStats": {
     "totalKm": 3200,
     "weeklyExpenses": [
-      { "category": "Benzina",  "amount": 0, "previousAmount": 0, "currency": "EUR", "emoji": "⛽" },
-      { "category": "Cibo",     "amount": 0, "previousAmount": 0, "currency": "EUR", "emoji": "🍜" },
-      { "category": "AI Tools", "amount": 0, "previousAmount": 0, "currency": "EUR", "emoji": "🤖" },
-      { "category": "Altro",    "amount": 0, "previousAmount": 0, "currency": "EUR", "emoji": "📦" }
+      { "category": "Benzina",  "amount": 32, "previousAmount": 0, "currency": "EUR", "emoji": "⛽" },
+      { "category": "Cibo",     "amount": 78, "previousAmount": 0, "currency": "EUR", "emoji": "🍜" },
+      { "category": "AI Tools", "amount": 0,  "previousAmount": 0, "currency": "EUR", "emoji": "🤖" },
+      { "category": "Altro",    "amount": 41, "previousAmount": 0, "currency": "EUR", "emoji": "📦" }
     ]
   },
   "resources": {
-    "pdfs": []
+    "pdfs": [
+      {
+        "title": "3 segnali di tool scam",
+        "description": "Come riconoscere una truffa",
+        "url": "https://drive.google.com/file/d/1tXLNfWmoMgUjLzXUGU-qlWBfFsAl-9gh/view?usp=drive_link"
+      },
+      {
+        "title": "Checklist anti scam",
+        "description": "Verifica prima di investire",
+        "url": "https://drive.google.com/file/d/13HhgaNPOLsnrzWJbeZuxEq3hFs4r92Pc/view?usp=sharing"
+      },
+      {
+        "title": "Calcolatore Schema Capitale",
+        "description": "Distribuisci il capitale tra i sistemi",
+        "url": "https://mattiapatane01-arch.github.io/CALCOLA/calcola_schema_capitale_v2.html"
+      }
+    ]
   },
   "telegram": {
-    "subscribers": 795,
+    "subscribers": 799,
     "url": "https://t.me/+86NBUJK6mxoxNGU0",
     "systemProgress": 25
   },

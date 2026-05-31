@@ -32,3 +32,9 @@ body {
 }
 
 /* Nessun padding generico sulle sezioni — ogni sezione definisce il suo */
+
+/* Opzione A: contiene il reflow del CountUp dentro la colonna sistemi
+   così non si propaga al globo o alla colonna spese */
+#stats-systems {
+  contain: layout;
+}

@@ -163,10 +163,10 @@ function renderMaterials(pdfs) {
 
     const link = document.createElement('a');
     link.className = 'material-card__link';
-    link.href = pdf.path;
+    link.href = pdf.url || pdf.path; // supporta sia url (esterni) che path (locali)
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.textContent = '↓ Scarica PDF';
+    link.textContent = 'Apri →';
 
     card.append(title, desc, link);
     grid.appendChild(card);

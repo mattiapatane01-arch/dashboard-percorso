@@ -176,6 +176,8 @@
   margin-bottom: 4px;
   margin-left: auto;
   max-width: 280px;
+  width: 280px;      /* larghezza fissa — il CountUp non cambia le dimensioni della card */
+  min-height: 72px;  /* altezza fissa — previene reflow verticale */
 }
 
 .systems-total__label {
@@ -188,10 +190,12 @@
 
 .systems-total__value {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem); /* ridotto per stare nella card senza overflow */
   font-weight: 900;
   white-space: nowrap;
   color: var(--yellow);
+  display: block;
+  min-width: 100%;
 }
 
 /* Badge P&L totale */
@@ -293,3 +297,13 @@
 }
 
 .system-tooltip[hidden] { display: none; }
+
+/* Disclaimer sotto i sistemi */
+.systems-disclaimer {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.5;
+  margin-top: 8px;
+  font-style: italic;
+}

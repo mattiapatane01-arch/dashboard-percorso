@@ -31,15 +31,17 @@
 
   <!-- 1. Hero -->
   <section id="hero">
-    <!-- Sticker fluttuanti -->
-    <img src="assets/img/graficouno.png"
-         class="hero__sticker hero__sticker--left"
-         alt="" aria-hidden="true"
-         onerror="this.style.display='none'">
-    <img src="assets/img/macchinauno.png"
-         class="hero__sticker hero__sticker--right"
-         alt="" aria-hidden="true"
-         onerror="this.style.display='none'">
+    <!-- Sticker fluttuanti (desktop: absolute; mobile: flex row sopra il testo) -->
+    <div class="hero__stickers-row">
+      <img src="assets/img/graficouno.png"
+           class="hero__sticker hero__sticker--left"
+           alt="" aria-hidden="true"
+           onerror="this.style.display='none'">
+      <img src="assets/img/macchinauno.png"
+           class="hero__sticker hero__sticker--right"
+           alt="" aria-hidden="true"
+           onerror="this.style.display='none'">
+    </div>
 
     <!-- Testo centrato -->
     <div class="hero__inner">

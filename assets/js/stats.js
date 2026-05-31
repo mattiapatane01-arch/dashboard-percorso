@@ -171,30 +171,45 @@ export function renderSystems(systems) {
     col.appendChild(buildSystemCard(sys));
   }
 
+  // ── Disclaimer sotto i sistemi ──
+  const disclaimer = document.createElement('p');
+  disclaimer.className = 'systems-disclaimer';
+  disclaimer.innerHTML = '↑ Profitti dell\'ultima settimana &nbsp;·&nbsp; I risultati passati non garantiscono rendimenti futuri. Dati reali, aggiornati ogni domenica.';
+  col.appendChild(disclaimer);
+
   container.appendChild(col);
 
-  // Fallback statico
-  totalValue.textContent = `${totalCapital.toLocaleString('it-IT')} ${currency}`;
+  // PnL badge — statico (CountUp sul PnL causa bug mappa)
   if (pnlBadgeEl) {
     pnlBadgeEl.textContent = `${totalPnL > 0 ? '+' : ''}${totalPnL} ${currency}`;
   }
 
-  // CountUp lento (3s) — attivato quando la sezione entra nel viewport
-  const CountUpCtor = typeof CountUp === 'function' ? CountUp
-                    : (typeof countUp !== 'undefined' ? countUp.CountUp : null);
-  if (!CountUpCtor) return;
+  // Capitale totale — fallback statico immediato
+  totalValue.textContent = `${totalCapital.toLocaleString('it-IT')} ${currency}`;
 
-  const obs = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
-    new CountUpCtor('systems-total-value', totalCapital, {
-      duration: 3,
-      separator: '.',
-      decimal: ',',
-      suffix: ` ${currency}`,
-    }).start();
-    obs.disconnect();
-  }, { threshold: 0.5 });
-  obs.observe(container);
+  // CountUp con IntersectionObserver — parte quando la card entra nel viewport
+  const totalEl = document.getElementById('systems-total-value');
+  if (totalEl && typeof countUp !== 'undefined') {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+        const cu = new countUp.CountUp(
+          'systems-total-value',
+          10330,
+          {
+            duration: 2.5,
+            separator: '.',
+            suffix: ' EUR',
+            startVal: 0,
+          }
+        );
+        if (!cu.error) cu.start();
+        observer.disconnect();
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(totalEl);
+  }
 }
 
 function buildSystemCard(sys) {

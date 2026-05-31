@@ -3,18 +3,19 @@
 /* ── Keyframes float ────────────────────────────────────── */
 
 @keyframes float-left {
-  0%, 100% { transform: rotate(-8deg) translateY(0); }
-  50%       { transform: rotate(-8deg) translateY(-12px); }
+  0%, 100% { transform: translateY(-50%) rotate(-8deg); }
+  50%       { transform: translateY(calc(-50% - 12px)) rotate(-8deg); }
 }
 
 @keyframes float-right {
-  0%, 100% { transform: rotate(8deg) translateY(0); }
-  50%       { transform: rotate(8deg) translateY(-12px); }
+  0%, 100% { transform: translateY(-50%) rotate(8deg); }
+  50%       { transform: translateY(calc(-50% - 12px)) rotate(8deg); }
 }
 
 /* ── Hero section — grid 3 colonne ─────────────────────── */
 
 #hero {
+  position: relative;
   display: grid;
   grid-template-columns: 200px 1fr 200px;
   align-items: center;
@@ -24,27 +25,31 @@
   background-color: var(--black);
 }
 
-/* ── Sticker — nel flusso grid, non absolute ────────────── */
+/* ── Wrapper sticker — invisibile su desktop ────────────── */
+
+.hero__stickers-row {
+  display: contents; /* i figli partecipano alla grid come se non ci fosse il wrapper */
+}
+
+/* ── Sticker — posizionati absolute su desktop ──────────── */
 
 .hero__sticker {
+  position: absolute;
+  top: 50%;
   pointer-events: none;
+  z-index: 1;
 }
 
 .hero__sticker--left {
-  justify-self: start;
-  width: 180px;
+  left: 2vw;
+  width: 220px;
   animation: float-left 3s ease-in-out infinite;
-  transform: rotate(-8deg);
 }
 
 .hero__sticker--right {
-  justify-self: end;
-  width: 180px;
+  right: 2vw;
+  width: 220px;
   animation: float-right 3s ease-in-out infinite;
-  transform: rotate(8deg);
-  right: -10px;
-  top: auto;
-  bottom: 60px;
 }
 
 /* ── Testo centrato — colonna centrale ──────────────────── */
@@ -52,6 +57,7 @@
 .hero__inner {
   grid-column: 2;
   text-align: center;
+  padding-top: 80px;
 }
 
 .hero__text {
@@ -105,20 +111,48 @@
 /* ── Mobile (max 767px) ──────────────────────────────── */
 @media (max-width: 767px) {
   #hero {
-    grid-template-columns: 80px 1fr 80px;
-    padding: 40px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 40px;
     min-height: auto;
   }
-  .hero__sticker--left,
-  .hero__sticker--right {
-    width: 70px;
+
+  /* Row sticker sopra il titolo */
+  .hero__stickers-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 16px;
+    width: 100%;
   }
+
+  /* Sticker torna nel flusso, non più absolute */
+  .hero__sticker {
+    position: static;
+    transform: none;
+    width: 100px;
+    animation: none;
+  }
+
+  .hero__sticker--left  { transform: rotate(-8deg); }
+  .hero__sticker--right { transform: rotate(8deg); }
+
+  .hero__inner {
+    grid-column: unset;
+    padding-top: 0;
+    width: 100%;
+  }
+
   .hero__name {
-    font-size: clamp(2rem, 10vw, 3rem);
+    font-size: clamp(2.5rem, 12vw, 3.5rem);
+    white-space: normal;
   }
+
   .hero__tagline {
     font-size: clamp(1rem, 4vw, 1.2rem);
   }
+
   .hero__description {
     font-size: 0.875rem;
   }
