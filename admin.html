@@ -111,6 +111,22 @@
       padding: 7px 11px;
     }
     .apikey-saved { color: var(--green); font-size: 0.75rem; display: none; }
+    .btn-green {
+      background: var(--green);
+      border-color: var(--black);
+      box-shadow: 3px 3px 0 rgba(255,255,255,0.15);
+    }
+    .btn-green:hover { box-shadow: 4px 4px 0 rgba(255,255,255,0.2); }
+    #gh-status {
+      border-radius: 8px;
+      margin-top: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      display: none;
+    }
+    #gh-status.info    { background: #0d0d20; border: 2px solid #3333aa; color: #8888ee; display: block; }
+    #gh-status.success { background: #051505; border: 2px solid var(--green); color: var(--green); display: block; }
+    #gh-status.error   { background: #1a0505; border: 2px solid var(--red); color: var(--red); display: block; }
 
     .panel-body {
       max-width: 680px;
@@ -214,9 +230,11 @@
 
   <!-- API KEY BAR -->
   <div class="apikey-bar">
-    <label>API Key</label>
-    <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" oninput="saveApiKey()">
-    <span class="apikey-saved" id="key-saved">salvata</span>
+    <label>Anthropic</label>
+    <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" oninput="saveApiKey()" style="max-width:220px;">
+    <label style="margin-left:8px;">GitHub</label>
+    <input type="password" id="gh-token-input" placeholder="github_pat_..." autocomplete="off" oninput="saveGhKey()" style="max-width:220px;">
+    <span class="apikey-saved" id="key-saved">✓</span>
   </div>
 
   <div class="panel-body">
@@ -302,11 +320,17 @@
     <!-- OUTPUT -->
     <div id="output-area">
       <div class="card">
-        <div class="card-title">✅ data.json aggiornato — pronto per il deploy</div>
+        <div class="card-title">✅ data.json aggiornato</div>
         <textarea id="json-output" readonly></textarea>
         <div class="output-btns">
-          <button class="btn" onclick="copyJSON()">📋 Copia JSON</button>
-          <button class="btn btn-outline" onclick="downloadJSON()">⬇️ Download data.json</button>
+          <button class="btn btn-green btn-full" onclick="pushToGitHub()" id="publish-btn" style="font-size:1.05rem; padding:12px;">
+            🚀 Pubblica su GitHub → Netlify
+          </button>
+        </div>
+        <div id="gh-status"></div>
+        <div class="output-btns" style="margin-top:10px;">
+          <button class="btn btn-outline" onclick="copyJSON()">📋 Copia JSON</button>
+          <button class="btn btn-outline" onclick="downloadJSON()">⬇️ Download</button>
         </div>
       </div>
     </div>
@@ -339,19 +363,27 @@
     if (e.key === 'Enter') checkPassword();
   });
 
-  // ── API KEY ───────────────────────────────────────────────
+  // ── API KEYS ──────────────────────────────────────────────
   function saveApiKey() {
-    const val = document.getElementById('api-key-input').value;
-    sessionStorage.setItem('adminKey', val);
+    sessionStorage.setItem('adminKey', document.getElementById('api-key-input').value);
+    flashSaved();
+  }
+  function saveGhKey() {
+    sessionStorage.setItem('ghKey', document.getElementById('gh-token-input').value);
+    flashSaved();
+  }
+  function flashSaved() {
     const saved = document.getElementById('key-saved');
     saved.style.display = 'inline';
-    setTimeout(() => { saved.style.display = 'none'; }, 1500);
+    setTimeout(() => { saved.style.display = 'none'; }, 1200);
   }
 
   // ── INIT ──────────────────────────────────────────────────
   async function init() {
     const saved = sessionStorage.getItem('adminKey');
     if (saved) document.getElementById('api-key-input').value = saved;
+    const ghSaved = sessionStorage.getItem('ghKey');
+    if (ghSaved) document.getElementById('gh-token-input').value = ghSaved;
 
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('meta-date').value = today;
@@ -463,7 +495,9 @@ Regole:
 
       document.getElementById('json-output').value = resultJSON;
       document.getElementById('output-area').style.display = 'block';
-      setStatus('success', '✅ Fatto! Scarica o copia il JSON, poi sostituisci data.json nella cartella del progetto.');
+      document.getElementById('gh-status').className = '';
+      document.getElementById('gh-status').style.display = 'none';
+      setStatus('success', '✅ JSON pronto — clicca "Pubblica su GitHub" per aggiornare il sito.');
 
     } catch (e) {
       setStatus('error', 'Errore: ' + e.message);
@@ -491,6 +525,73 @@ Regole:
     lines.push(`- vanStats.weeklyExpenses[Altro].amount = ${n('e-altro')} (salva vecchio amount in previousAmount)`);
     lines.push(`- telegram.subscribers = ${n('tg-subs')}`);
     return lines.join('\n');
+  }
+
+  // ── GITHUB PUSH ───────────────────────────────────────────
+  const GH_OWNER = 'mattiapatane01-arch';
+  const GH_REPO  = 'dashboard-percorso';
+  const GH_FILE  = 'data.json';
+
+  async function pushToGitHub() {
+    const token = document.getElementById('gh-token-input').value.trim();
+    if (!token)     { setGhStatus('error', 'Inserisci il GitHub Personal Access Token'); return; }
+    if (!resultJSON){ setGhStatus('error', 'Genera prima il JSON aggiornato'); return; }
+
+    const btn = document.getElementById('publish-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Pubblicazione in corso...';
+    setGhStatus('info', 'Contatto GitHub API…');
+
+    try {
+      // 1. Recupera SHA attuale del file
+      const getRes = await fetch(
+        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`,
+        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } }
+      );
+      if (!getRes.ok) throw new Error(`Impossibile leggere il file: HTTP ${getRes.status}`);
+      const fileData = await getRes.json();
+      const sha = fileData.sha;
+
+      // 2. Codifica contenuto in base64 (UTF-8 safe)
+      const encoded = btoa(unescape(encodeURIComponent(resultJSON)));
+      const date    = document.getElementById('meta-date').value || new Date().toISOString().split('T')[0];
+
+      // 3. Commit + push
+      const putRes = await fetch(
+        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `update data.json - ${date}`,
+            content: encoded,
+            sha: sha,
+          }),
+        }
+      );
+      if (!putRes.ok) {
+        const err = await putRes.json().catch(() => ({}));
+        throw new Error(err.message || `HTTP ${putRes.status}`);
+      }
+
+      setGhStatus('success', '🚀 Pubblicato! Netlify sta deployando — il sito si aggiorna in ~30 secondi.');
+
+    } catch (e) {
+      setGhStatus('error', 'Errore: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '🚀 Pubblica su GitHub → Netlify';
+    }
+  }
+
+  function setGhStatus(type, msg) {
+    const el = document.getElementById('gh-status');
+    el.className = type;
+    el.textContent = msg;
   }
 
   // ── COPY / DOWNLOAD ───────────────────────────────────────
