@@ -18,8 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Stelle JS su tutte le sezioni dark + hero
     document.querySelectorAll('#hero, .stars-bg').forEach(el => createStars(el, 150));
-    // Parallax DOPO createStars (le .stars-layer devono esistere)
-    initParallax();
 
   } catch (err) {
     console.error('Errore caricamento data.json:', err);
@@ -129,27 +127,6 @@ function createStars(container, count = 150) {
 
   // Prepend: stelle prima del contenuto (contenuto con z-index:1 resta sopra)
   container.insertBefore(layer, container.firstChild);
-}
-
-// ── Parallax stelle ────────────────────────────────────────────────────────────
-
-function initParallax() {
-  const layers = document.querySelectorAll('.stars-layer');
-  if (!layers.length) return;
-  let ticking = false;
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        layers.forEach(layer => {
-          layer.style.transform = `translateY(${y * 0.3}px)`;
-        });
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
 }
 
 // ── Materiali PDF ─────────────────────────────────────────────────────────────
