@@ -87,6 +87,12 @@ export function initGlobe(data) {
   map.touchZoomRotate.enable();
 
   map.on('load', () => {
+    // Forza ridisegno canvas e centra l'Australia al caricamento
+    setTimeout(() => {
+      map.resize();
+      map.flyTo({ center: [133, -28], zoom: 2.5, essential: true });
+    }, 300);
+
     // ── Fog: spazio nero + stelle + atmosfera azzurra ──
     map.setFog({
       'range':          [0.5, 10],

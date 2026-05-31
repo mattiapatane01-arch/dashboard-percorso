@@ -162,7 +162,7 @@
   align-self: flex-end;
 }
 
-/* Card totale capitale — contain previene reflow verso l'esterno (canvas Mapbox) */
+/* Card totale capitale */
 .systems-total {
   display: flex;
   flex-direction: column;
@@ -174,7 +174,8 @@
   background: #111111;
   color: var(--white);
   margin-bottom: 4px;
-  contain: layout style;
+  margin-left: auto;
+  max-width: 280px;
 }
 
 .systems-total__label {

@@ -173,11 +173,28 @@ export function renderSystems(systems) {
 
   container.appendChild(col);
 
-  // Capitale totale — numero statico (CountUp rimosso: causava reflow su canvas Mapbox)
+  // Fallback statico
   totalValue.textContent = `${totalCapital.toLocaleString('it-IT')} ${currency}`;
   if (pnlBadgeEl) {
     pnlBadgeEl.textContent = `${totalPnL > 0 ? '+' : ''}${totalPnL} ${currency}`;
   }
+
+  // CountUp lento (3s) — attivato quando la sezione entra nel viewport
+  const CountUpCtor = typeof CountUp === 'function' ? CountUp
+                    : (typeof countUp !== 'undefined' ? countUp.CountUp : null);
+  if (!CountUpCtor) return;
+
+  const obs = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    new CountUpCtor('systems-total-value', totalCapital, {
+      duration: 3,
+      separator: '.',
+      decimal: ',',
+      suffix: ` ${currency}`,
+    }).start();
+    obs.disconnect();
+  }, { threshold: 0.5 });
+  obs.observe(container);
 }
 
 function buildSystemCard(sys) {
