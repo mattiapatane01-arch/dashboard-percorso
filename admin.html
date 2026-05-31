@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Dashboard Percorso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --yellow: #FFD600;
+      --black: #0A0A0A;
+      --white: #FFFFFF;
+      --green: #00C853;
+      --red: #FF3D00;
+      --card: #141414;
+      --border: #2a2a2a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Fredoka', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* LOCK SCREEN */
+    #lock-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 16px;
+      padding: 24px;
+    }
+    #lock-screen h1 { font-size: 2rem; color: var(--yellow); }
+    #lock-screen p { color: #666; font-size: 0.9rem; }
+    .lock-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
+    #lock-error { color: var(--red); font-size: 0.85rem; text-align: center; display: none; }
+
+    /* INPUTS */
+    input, textarea, select {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
+      padding: 9px 13px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus { outline: none; border-color: var(--yellow); }
+    input::placeholder, textarea::placeholder { color: #444; }
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    /* BUTTONS */
+    .btn {
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      border-radius: 8px;
+      box-shadow: 3px 3px 0 rgba(255,255,255,0.15);
+      color: var(--black);
+      cursor: pointer;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 10px 20px;
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+    .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 rgba(255,255,255,0.2); }
+    .btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(255,255,255,0.1); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--white);
+      box-shadow: 3px 3px 0 var(--border);
+    }
+    .btn-outline:hover { border-color: var(--yellow); color: var(--yellow); box-shadow: 4px 4px 0 var(--yellow); }
+    .btn-full { width: 100%; }
+    .btn-big { font-size: 1.1rem; padding: 14px; }
+
+    /* ADMIN PANEL */
+    #admin-panel { display: none; }
+
+    .apikey-bar {
+      background: #0d0d0d;
+      border-bottom: 2px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .apikey-bar label { color: #666; font-size: 0.8rem; white-space: nowrap; }
+    .apikey-bar input {
+      max-width: 320px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      padding: 7px 11px;
+    }
+    .apikey-saved { color: var(--green); font-size: 0.75rem; display: none; }
+
+    .panel-body {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--border);
+    }
+    .panel-header h1 { font-size: 1.5rem; color: var(--yellow); }
+    .panel-header small { color: #555; font-size: 0.8rem; }
+
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      padding: 18px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--yellow);
+      margin-bottom: 14px;
+    }
+
+    /* FIELD */
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 0.75rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* GRIDS */
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .g4 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (min-width: 480px) { .g4 { grid-template-columns: repeat(4, 1fr); } }
+
+    .system-row {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .system-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .system-name { font-size: 0.85rem; color: #bbb; margin-bottom: 8px; }
+
+    /* STATUS */
+    #status {
+      border-radius: 8px;
+      margin: 14px 0;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    #status.info    { background: #0d0d20; border: 2px solid #3333aa; color: #8888ee; display: block; }
+    #status.success { background: #051505; border: 2px solid var(--green); color: var(--green); display: block; }
+    #status.error   { background: #1a0505; border: 2px solid var(--red); color: var(--red); display: block; }
+
+    /* OUTPUT */
+    #output-area { display: none; }
+    #json-output {
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      height: 280px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .output-btns { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid #555;
+      border-top-color: var(--yellow);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lock-screen">
+  <h1>🔐 Admin</h1>
+  <p>Accesso riservato — dashboard percorso</p>
+  <div class="lock-box">
+    <input type="password" id="pwd-input" placeholder="Password" autocomplete="current-password">
+    <button class="btn btn-full" onclick="checkPassword()">Accedi</button>
+    <div id="lock-error">Password errata</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+
+  <!-- API KEY BAR -->
+  <div class="apikey-bar">
+    <label>API Key</label>
+    <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" oninput="saveApiKey()">
+    <span class="apikey-saved" id="key-saved">salvata</span>
+  </div>
+
+  <div class="panel-body">
+    <div class="panel-header">
+      <h1>Aggiornamento settimanale</h1>
+      <small id="last-updated-label"></small>
+    </div>
+
+    <!-- DATA -->
+    <div class="card">
+      <div class="card-title">📅 Data aggiornamento</div>
+      <div class="field">
+        <label>Data (YYYY-MM-DD)</label>
+        <input type="date" id="meta-date">
+      </div>
+    </div>
+
+    <!-- SISTEMI -->
+    <div class="card">
+      <div class="card-title">📊 Sistemi di investimento (€)</div>
+
+      <div class="system-row">
+        <div class="system-name">Sistema Conservativo</div>
+        <div class="g2">
+          <div class="field"><label>Capitale</label><input type="number" id="s-cons-cap" placeholder="0"></div>
+          <div class="field"><label>PnL settimana</label><input type="number" id="s-cons-pnl" placeholder="0"></div>
+        </div>
+      </div>
+
+      <div class="system-row">
+        <div class="system-name">Strumento Alto Rischio 1</div>
+        <div class="g2">
+          <div class="field"><label>Capitale</label><input type="number" id="s-alto1-cap" placeholder="0"></div>
+          <div class="field"><label>PnL settimana</label><input type="number" id="s-alto1-pnl" placeholder="0"></div>
+        </div>
+      </div>
+
+      <div class="system-row">
+        <div class="system-name">Strumento Alto Rischio 2</div>
+        <div class="g2">
+          <div class="field"><label>Capitale</label><input type="number" id="s-alto2-cap" placeholder="0"></div>
+          <div class="field"><label>PnL settimana</label><input type="number" id="s-alto2-pnl" placeholder="0"></div>
+        </div>
+      </div>
+
+      <div class="system-row">
+        <div class="system-name">Super Aggressivo</div>
+        <div class="g2">
+          <div class="field"><label>Capitale</label><input type="number" id="s-superagg-cap" placeholder="0"></div>
+          <div class="field"><label>PnL settimana</label><input type="number" id="s-superagg-pnl" placeholder="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPESE -->
+    <div class="card">
+      <div class="card-title">🚐 Spese van settimanali (€)</div>
+      <div class="g4">
+        <div class="field"><label>⛽ Benzina</label><input type="number" id="e-benzina" placeholder="0"></div>
+        <div class="field"><label>🍜 Cibo</label><input type="number" id="e-cibo" placeholder="0"></div>
+        <div class="field"><label>🤖 AI Tools</label><input type="number" id="e-ai" placeholder="0"></div>
+        <div class="field"><label>📦 Altro</label><input type="number" id="e-altro" placeholder="0"></div>
+      </div>
+    </div>
+
+    <!-- KM + TELEGRAM -->
+    <div class="card">
+      <div class="card-title">🗺️ Van & Telegram</div>
+      <div class="g2">
+        <div class="field"><label>Km totali</label><input type="number" id="total-km" placeholder="0"></div>
+        <div class="field"><label>Iscritti Telegram</label><input type="number" id="tg-subs" placeholder="0"></div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <button class="btn btn-full btn-big" id="update-btn" onclick="updateData()">
+      ⚡ Aggiorna Dashboard
+    </button>
+
+    <!-- STATUS -->
+    <div id="status"></div>
+
+    <!-- OUTPUT -->
+    <div id="output-area">
+      <div class="card">
+        <div class="card-title">✅ data.json aggiornato — pronto per il deploy</div>
+        <textarea id="json-output" readonly></textarea>
+        <div class="output-btns">
+          <button class="btn" onclick="copyJSON()">📋 Copia JSON</button>
+          <button class="btn btn-outline" onclick="downloadJSON()">⬇️ Download data.json</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ─── CONFIGURAZIONE ────────────────────────────────────────
+  // Cambia questa password prima del deploy
+  const PASSWORD = 'percorso2026';
+  // ───────────────────────────────────────────────────────────
+
+  let currentData = null;
+  let resultJSON   = '';
+
+  // ── LOCK ──────────────────────────────────────────────────
+  function checkPassword() {
+    if (document.getElementById('pwd-input').value === PASSWORD) {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('admin-panel').style.display = 'block';
+      init();
+    } else {
+      document.getElementById('lock-error').style.display = 'block';
+      document.getElementById('pwd-input').value = '';
+      document.getElementById('pwd-input').focus();
+    }
+  }
+  document.getElementById('pwd-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  // ── API KEY ───────────────────────────────────────────────
+  function saveApiKey() {
+    const val = document.getElementById('api-key-input').value;
+    sessionStorage.setItem('adminKey', val);
+    const saved = document.getElementById('key-saved');
+    saved.style.display = 'inline';
+    setTimeout(() => { saved.style.display = 'none'; }, 1500);
+  }
+
+  // ── INIT ──────────────────────────────────────────────────
+  async function init() {
+    const saved = sessionStorage.getItem('adminKey');
+    if (saved) document.getElementById('api-key-input').value = saved;
+
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('meta-date').value = today;
+
+    try {
+      const res = await fetch('data.json?t=' + Date.now());
+      currentData = await res.json();
+      prefill(currentData);
+      if (currentData.meta?.lastUpdated) {
+        document.getElementById('last-updated-label').textContent =
+          'ultimo aggiornamento: ' + currentData.meta.lastUpdated;
+      }
+    } catch (e) {
+      setStatus('error', 'Impossibile caricare data.json: ' + e.message);
+    }
+  }
+
+  // ── PRE-FILL ──────────────────────────────────────────────
+  function prefill(data) {
+    if (data.meta?.lastUpdated) {
+      document.getElementById('meta-date').value = data.meta.lastUpdated;
+    }
+
+    const sysMap = {
+      conservativo:    ['s-cons-cap',   's-cons-pnl'],
+      alto1:           ['s-alto1-cap',  's-alto1-pnl'],
+      alto2:           ['s-alto2-cap',  's-alto2-pnl'],
+      superaggressivo: ['s-superagg-cap','s-superagg-pnl'],
+    };
+    (data.systems || []).forEach(s => {
+      const ids = sysMap[s.id];
+      if (!ids) return;
+      document.getElementById(ids[0]).value = s.capital  ?? '';
+      document.getElementById(ids[1]).value = s.weeklyPnL ?? '';
+    });
+
+    const expMap = { Benzina:'e-benzina', Cibo:'e-cibo', 'AI Tools':'e-ai', Altro:'e-altro' };
+    (data.vanStats?.weeklyExpenses || []).forEach(e => {
+      const id = expMap[e.category];
+      if (id) document.getElementById(id).value = e.amount ?? '';
+    });
+
+    if (data.vanStats?.totalKm    !== undefined) document.getElementById('total-km').value = data.vanStats.totalKm;
+    if (data.telegram?.subscribers !== undefined) document.getElementById('tg-subs').value  = data.telegram.subscribers;
+  }
+
+  // ── READ FORM ─────────────────────────────────────────────
+  function n(id) { return parseFloat(document.getElementById(id).value) || 0; }
+  function s(id) { return document.getElementById(id).value.trim(); }
+
+  // ── UPDATE ────────────────────────────────────────────────
+  async function updateData() {
+    const apiKey = document.getElementById('api-key-input').value.trim();
+    if (!apiKey)      { setStatus('error', 'Inserisci la API Key Anthropic'); return; }
+    if (!currentData) { setStatus('error', 'data.json non ancora caricato'); return; }
+
+    const btn = document.getElementById('update-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Chiamata API in corso...';
+    setStatus('info', 'Contatto Claude API…');
+    document.getElementById('output-area').style.display = 'none';
+
+    try {
+      const instructions = buildInstructions();
+      const prompt = `Sei un assistente che aggiorna file JSON.
+Ricevi il data.json attuale e una lista di aggiornamenti da applicare.
+Restituisci SOLO il JSON aggiornato, valido, senza markdown, senza \`\`\`, senza nessun testo aggiuntivo prima o dopo.
+
+DATA.JSON ATTUALE:
+${JSON.stringify(currentData, null, 2)}
+
+AGGIORNAMENTI DA APPLICARE:
+${instructions}
+
+Regole:
+- Mantieni tutti i campi esistenti non menzionati sopra invariati
+- Per vanStats.weeklyExpenses: prima di aggiornare amount, copia il vecchio amount in previousAmount
+- Restituisci il JSON completo e valido`;
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-clients': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 4096,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP ${res.status}`);
+      }
+
+      const result = await res.json();
+      const raw = result.content?.[0]?.text || '';
+
+      // Estrai il JSON dalla risposta (rimuovi eventuale markdown)
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('Claude non ha restituito JSON valido. Risposta: ' + raw.slice(0, 200));
+
+      const parsed = JSON.parse(match[0]);
+      resultJSON = JSON.stringify(parsed, null, 2);
+
+      document.getElementById('json-output').value = resultJSON;
+      document.getElementById('output-area').style.display = 'block';
+      setStatus('success', '✅ Fatto! Scarica o copia il JSON, poi sostituisci data.json nella cartella del progetto.');
+
+    } catch (e) {
+      setStatus('error', 'Errore: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '⚡ Aggiorna Dashboard';
+    }
+  }
+
+  function buildInstructions() {
+    const lines = [];
+    lines.push(`- meta.lastUpdated = "${s('meta-date')}"`);
+    lines.push(`- systems[id=conservativo].capital = ${n('s-cons-cap')}`);
+    lines.push(`- systems[id=conservativo].weeklyPnL = ${n('s-cons-pnl')}`);
+    lines.push(`- systems[id=alto1].capital = ${n('s-alto1-cap')}`);
+    lines.push(`- systems[id=alto1].weeklyPnL = ${n('s-alto1-pnl')}`);
+    lines.push(`- systems[id=alto2].capital = ${n('s-alto2-cap')}`);
+    lines.push(`- systems[id=alto2].weeklyPnL = ${n('s-alto2-pnl')}`);
+    lines.push(`- systems[id=superaggressivo].capital = ${n('s-superagg-cap')}`);
+    lines.push(`- systems[id=superaggressivo].weeklyPnL = ${n('s-superagg-pnl')}`);
+    lines.push(`- vanStats.totalKm = ${n('total-km')}`);
+    lines.push(`- vanStats.weeklyExpenses[Benzina].amount = ${n('e-benzina')} (salva vecchio amount in previousAmount)`);
+    lines.push(`- vanStats.weeklyExpenses[Cibo].amount = ${n('e-cibo')} (salva vecchio amount in previousAmount)`);
+    lines.push(`- vanStats.weeklyExpenses[AI Tools].amount = ${n('e-ai')} (salva vecchio amount in previousAmount)`);
+    lines.push(`- vanStats.weeklyExpenses[Altro].amount = ${n('e-altro')} (salva vecchio amount in previousAmount)`);
+    lines.push(`- telegram.subscribers = ${n('tg-subs')}`);
+    return lines.join('\n');
+  }
+
+  // ── COPY / DOWNLOAD ───────────────────────────────────────
+  function copyJSON() {
+    navigator.clipboard.writeText(resultJSON).then(() => {
+      const btn = event.target;
+      const orig = btn.textContent;
+      btn.textContent = '✅ Copiato!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    });
+  }
+
+  function downloadJSON() {
+    const blob = new Blob([resultJSON], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── STATUS ────────────────────────────────────────────────
+  function setStatus(type, msg) {
+    const el = document.getElementById('status');
+    el.className = type;
+    el.textContent = msg;
+  }
+</script>
+</body>
+</html>
