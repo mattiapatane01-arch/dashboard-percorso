@@ -12,7 +12,11 @@ let tooltipEl = null;
 // ── Marker HTML ───────────────────────────────────────────────────────────────
 
 function createMarkerEl(wp, isLast) {
+  // Controllo deduplicazione: se il marker esiste già non ricrearlo
+  if (document.getElementById('marker-' + wp.id)) return null;
+
   const el = document.createElement('div');
+  el.id = 'marker-' + wp.id;
   el.className = 'globe-marker ' + (isLast ? 'globe-marker--van' : 'globe-marker--person');
 
   const img = document.createElement('img');
@@ -125,6 +129,7 @@ export function initGlobe(data) {
     wps.forEach((wp, i) => {
       const isLast = i === wps.length - 1;
       const el     = createMarkerEl(wp, isLast);
+      if (!el) return; // già esistente — skip
 
       new mapboxgl.Marker({ element: el, anchor: 'center' })
         .setLngLat([wp.lng, wp.lat])
@@ -132,7 +137,6 @@ export function initGlobe(data) {
 
       el.addEventListener('click', e => {
         e.stopPropagation();
-        // Van (Melbourne) mostra km; waypoint passati mostrano data
         showTooltip(e.clientX, e.clientY, wp, isLast);
       });
     });
