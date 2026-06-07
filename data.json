@@ -33,6 +33,7 @@
   ],
   "vanStats": {
     "totalKm": 3454,
+    "monthlyExpensesTotal": 144,
     "weeklyExpenses": [
       { "category": "Benzina",  "amount": 46, "previousAmount": 32, "currency": "EUR", "emoji": "⛽" },
       { "category": "Cibo",     "amount": 26, "previousAmount": 78, "currency": "EUR", "emoji": "🍜" },

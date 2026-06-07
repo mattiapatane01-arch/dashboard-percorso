@@ -503,6 +503,12 @@
       updated.vanStats.totalKm     = n('total-km');
       updated.telegram.subscribers = n('tg-subs');
 
+      // Totale spese mensile
+      const weeklyExpTotal = n('e-benzina') + n('e-cibo') + n('e-ai') + n('e-altro');
+      updated.vanStats.monthlyExpensesTotal = resetMonth
+        ? weeklyExpTotal
+        : (updated.vanStats.monthlyExpensesTotal || 0) + weeklyExpTotal;
+
       // Nuova tappa mappa
       if (pendingWaypoint) {
         const note = s('new-city-note');

@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     renderHero(data.hero);
     initGlobe(data);
-    renderExpenses(data.vanStats.weeklyExpenses);
+    renderExpenses(data.vanStats.weeklyExpenses, data.vanStats.monthlyExpensesTotal);
     renderSystems(data.systems);
     initTelegram(data.telegram);
     initBuild(data.telegram);

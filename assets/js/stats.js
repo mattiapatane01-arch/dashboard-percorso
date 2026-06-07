@@ -4,7 +4,7 @@
 
 // ── Spese ────────────────────────────────────────────────────────────────────
 
-export function renderExpenses(expenses) {
+export function renderExpenses(expenses, monthlyTotal) {
   const container = document.getElementById('stats-expenses');
   if (!container) return;
 
@@ -30,14 +30,33 @@ export function renderExpenses(expenses) {
   // Card totale spese
   const totalCard = document.createElement('div');
   totalCard.className = 'expenses-total';
+  totalCard.style.cursor = 'pointer';
+  totalCard.style.position = 'relative';
   const tLabel = document.createElement('span');
   tLabel.className = 'expenses-total__label';
   tLabel.textContent = 'Totale spese';
   const tAmount = document.createElement('span');
   tAmount.className = 'expenses-total__amount';
   tAmount.textContent = `${total} ${expenses[0]?.currency || 'EUR'}`;
-  totalCard.append(tLabel, tAmount);
+
+  // Tooltip "Da inizio mese"
+  const expTip = document.createElement('div');
+  expTip.className = 'xp-tooltip';
+  expTip.setAttribute('hidden', '');
+  const expTipLabel = document.createElement('span');
+  expTipLabel.textContent = 'Da inizio mese';
+  const expTipVal = document.createElement('strong');
+  expTipVal.textContent = `${monthlyTotal || total} ${expenses[0]?.currency || 'EUR'}`;
+  expTip.append(expTipLabel, expTipVal);
+
+  totalCard.append(tLabel, tAmount, expTip);
   col.appendChild(totalCard);
+
+  totalCard.addEventListener('click', e => {
+    e.stopPropagation();
+    expTip.hasAttribute('hidden') ? expTip.removeAttribute('hidden') : expTip.setAttribute('hidden', '');
+  });
+  document.addEventListener('click', () => expTip.setAttribute('hidden', ''));
 
   container.appendChild(col);
 
@@ -94,7 +113,7 @@ function buildExpenseBar(e, total) {
   } else {
     const sign = delta >= 0 ? '+' : '';
     tipValue.textContent = `${sign}${delta.toFixed(0)} ${e.currency}`;
-    tipValue.className = delta > 0 ? 'tip--down' : delta < 0 ? 'tip--up' : '';
+    tipValue.className = delta > 0 ? 'tip--up' : delta < 0 ? 'tip--down' : '';
   }
 
   tip.append(tipLabel, tipValue);
