@@ -307,6 +307,27 @@
       </div>
     </div>
 
+    <!-- POSIZIONE -->
+    <div class="card">
+      <div class="card-title">📍 Posizione attuale</div>
+      <div style="font-size:0.82rem; color:#666; margin-bottom:12px;">
+        Posizione attuale: <strong id="current-city-label" style="color:#aaa;">—</strong>
+      </div>
+      <div style="display:flex; gap:8px; align-items:flex-end;">
+        <div class="field" style="flex:1;">
+          <label>Nuova città</label>
+          <input type="text" id="new-city" placeholder="es. Adelaide" autocomplete="off"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();geocodeCity();}">
+        </div>
+        <button class="btn btn-outline" onclick="geocodeCity()" id="geo-btn" style="flex-shrink:0; white-space:nowrap;">Cerca</button>
+      </div>
+      <div class="field" style="margin-top:10px;">
+        <label>Nota (opzionale)</label>
+        <input type="text" id="new-city-note" placeholder="es. Prima notte in SA">
+      </div>
+      <div id="geo-result" style="margin-top:10px; font-size:0.82rem; display:none; padding:8px 12px; border-radius:6px; border:2px solid;"></div>
+    </div>
+
     <!-- SUBMIT -->
     <button class="btn btn-full btn-big" id="update-btn" onclick="updateData()">
       ⚡ Aggiorna Dashboard
@@ -342,8 +363,9 @@
   const PASSWORD = 'Mattia01.,';
   // ───────────────────────────────────────────────────────────
 
-  let currentData = null;
-  let resultJSON   = '';
+  let currentData    = null;
+  let resultJSON     = '';
+  let pendingWaypoint = null;
 
   // ── LOCK ──────────────────────────────────────────────────
   function checkPassword() {
@@ -420,6 +442,11 @@
 
     if (data.vanStats?.totalKm    !== undefined) document.getElementById('total-km').value = data.vanStats.totalKm;
     if (data.telegram?.subscribers !== undefined) document.getElementById('tg-subs').value  = data.telegram.subscribers;
+
+    // Mostra città attuale
+    const waypoints = data.map?.waypoints || [];
+    const curWp = waypoints.find(wp => wp.note === 'Posizione attuale') || waypoints[waypoints.length - 1];
+    if (curWp) document.getElementById('current-city-label').textContent = curWp.name;
   }
 
   // ── READ FORM ─────────────────────────────────────────────
@@ -462,8 +489,23 @@
       });
 
       // Km e Telegram
-      updated.vanStats.totalKm    = n('total-km');
+      updated.vanStats.totalKm     = n('total-km');
       updated.telegram.subscribers = n('tg-subs');
+
+      // Nuova tappa mappa
+      if (pendingWaypoint) {
+        const note = s('new-city-note');
+        const newWp = { ...pendingWaypoint, note: note || 'Posizione attuale' };
+        (updated.map?.waypoints || []).forEach(wp => {
+          if (wp.note === 'Posizione attuale') wp.note = '';
+        });
+        const existingIdx = (updated.map?.waypoints || []).findIndex(wp => wp.id === newWp.id);
+        if (existingIdx >= 0) {
+          updated.map.waypoints[existingIdx] = newWp;
+        } else {
+          updated.map.waypoints.push(newWp);
+        }
+      }
 
       resultJSON = JSON.stringify(updated, null, 2);
 
@@ -476,6 +518,63 @@
     } catch (e) {
       setStatus('error', 'Errore: ' + e.message);
     }
+  }
+
+  // ── GEOCODING ─────────────────────────────────────────────
+  async function geocodeCity() {
+    const cityName = s('new-city');
+    if (!cityName) return;
+
+    const btn    = document.getElementById('geo-btn');
+    const result = document.getElementById('geo-result');
+    btn.disabled    = true;
+    btn.textContent = '...';
+    result.style.display = 'none';
+    pendingWaypoint = null;
+
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName + ' Australia')}&format=json&limit=1`;
+      const res  = await fetch(url, { headers: { 'User-Agent': 'dashboard-percorso/1.0' } });
+      const data = await res.json();
+
+      if (!data.length) {
+        showGeoResult('error', 'Città non trovata — prova con il nome completo (es. "Port Augusta")');
+        return;
+      }
+
+      const place = data[0];
+      const lat   = Math.round(parseFloat(place.lat) * 100) / 100;
+      const lng   = Math.round(parseFloat(place.lon) * 100) / 100;
+      const name  = place.display_name.split(',')[0];
+
+      pendingWaypoint = {
+        id:   cityName.toLowerCase().replace(/\s+/g, ''),
+        name: name,
+        lat:  lat,
+        lng:  lng,
+        x:    0,
+        y:    0,
+        date: s('meta-date') || new Date().toISOString().split('T')[0],
+        note: 'Posizione attuale',
+      };
+
+      showGeoResult('success', `✓ ${name} — lat: ${lat}, lng: ${lng}`);
+
+    } catch (e) {
+      showGeoResult('error', 'Errore: ' + e.message);
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = 'Cerca';
+    }
+  }
+
+  function showGeoResult(type, msg) {
+    const el = document.getElementById('geo-result');
+    el.style.display     = 'block';
+    el.style.color       = type === 'success' ? 'var(--green)' : 'var(--red)';
+    el.style.borderColor = type === 'success' ? 'var(--green)' : 'var(--red)';
+    el.style.background  = type === 'success' ? '#051505' : '#1a0505';
+    el.textContent = msg;
   }
 
   // ── GITHUB PUSH ───────────────────────────────────────────
