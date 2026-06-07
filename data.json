@@ -21,7 +21,8 @@
       { "id": "batemansbay",   "name": "Batemans Bay",   "lat": -35.71, "lng": 150.18, "x": 0, "y": 0, "date": "2026-05-21", "note": "" },
       { "id": "eden",          "name": "Eden",           "lat": -37.07, "lng": 149.90, "x": 0, "y": 0, "date": "2026-05-25", "note": "" },
       { "id": "lakesentrance", "name": "Lakes Entrance", "lat": -37.88, "lng": 147.98, "x": 0, "y": 0, "date": "2026-05-28", "note": "" },
-      { "id": "melbourne",     "name": "Melbourne",      "lat": -37.81, "lng": 144.96, "x": 0, "y": 0, "date": "2026-05-31", "note": "Posizione attuale" }
+      { "id": "melbourne",     "name": "Melbourne",      "lat": -37.81, "lng": 144.96, "x": 0, "y": 0, "date": "2026-05-31", "note": "" },
+      { "id": "warrnambool",  "name": "Warrnambool",    "lat": -38.38, "lng": 142.48, "x": 0, "y": 0, "date": "2026-06-07", "note": "Posizione attuale" }
     ]
   },
   "systems": [
