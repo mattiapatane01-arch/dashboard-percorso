@@ -118,7 +118,7 @@ export function renderSystems(systems) {
   const container = document.getElementById('stats-systems');
   if (!container) return;
 
-  const totalCapital = systems.reduce((s, sys) => s + (sys.capital || 0), 0);
+  const totalCapital = systems.reduce((s, sys) => s + (sys.capital || 0) + (sys.weeklyPnL || 0), 0);
   const totalPnL     = systems.reduce((s, sys) => s + (sys.weeklyPnL || 0), 0);
   const currency     = systems[0]?.currency || 'EUR';
 
@@ -195,7 +195,7 @@ export function renderSystems(systems) {
         if (!entries[0].isIntersecting) return;
         const cu = new countUp.CountUp(
           'systems-total-value',
-          10330,
+          totalCapital,
           {
             duration: 2.5,
             separator: '.',
@@ -210,13 +210,15 @@ export function renderSystems(systems) {
     );
     observer.observe(totalEl);
   }
+
+  attachTooltipEvents(container, '.system-card', '.sys-tooltip');
 }
 
 function buildSystemCard(sys) {
-  const pnl    = sys.weeklyPnL || 0;
-  const cap    = sys.capital   || 0;
+  const pnl    = sys.weeklyPnL  || 0;
+  const cap    = sys.capital    || 0;
+  const netCap = cap + pnl;
   const pnlAbs = Math.abs(pnl);
-  const pnlPct = cap > 0 ? (pnlAbs / cap * 100).toFixed(1) : '0.0';
   const ovlW   = cap > 0 ? Math.min(pnlAbs / cap * 100, 40) : 0;
   const sign   = pnl > 0 ? '+' : '';
 
@@ -254,7 +256,7 @@ function buildSystemCard(sys) {
 
   const amount = document.createElement('span');
   amount.className = 'system-card__amount';
-  amount.textContent = `${cap.toLocaleString('it-IT')} ${sys.currency}`;
+  amount.textContent = `${netCap.toLocaleString('it-IT')} ${sys.currency}`;
   amountRow.appendChild(amount);
 
   if (pnl !== 0) {
@@ -266,9 +268,21 @@ function buildSystemCard(sys) {
     amountRow.appendChild(pnlBadge);
   }
 
-  card.append(header, track, amountRow);
+  // Tooltip P&L mese (su click/tap)
+  const tip = document.createElement('div');
+  tip.className = 'xp-tooltip sys-tooltip';
+  tip.setAttribute('hidden', '');
+  const tipLabel = document.createElement('span');
+  tipLabel.textContent = 'Da inizio mese';
+  const tipValue = document.createElement('strong');
+  const mp = sys.monthlyPnL ?? 0;
+  tipValue.textContent = `${mp >= 0 ? '+' : ''}${mp} ${sys.currency}`;
+  tipValue.className = mp > 0 ? 'tip--up' : mp < 0 ? 'tip--down' : '';
+  tip.append(tipLabel, tipValue);
 
-  // Hover desktop + touch mobile: riempie l'overlay PnL (una sola volta, non torna a 0)
+  card.append(header, track, amountRow, tip);
+
+  // Hover desktop: riempie l'overlay PnL (una sola volta)
   if (overlayEl) {
     const triggerFill = () => {
       if (overlayEl.dataset.filled) return;

@@ -26,10 +26,10 @@
     ]
   },
   "systems": [
-    { "id": "conservativo",    "name": "Sistema Conservativo",     "capital": 1736, "weeklyPnL": 80,   "currency": "EUR" },
-    { "id": "alto1",           "name": "Strumento Alto Rischio 1", "capital": 4156, "weeklyPnL": -626, "currency": "EUR" },
-    { "id": "alto2",           "name": "Strumento Alto Rischio 2", "capital": 3509, "weeklyPnL": 894,  "currency": "EUR" },
-    { "id": "superaggressivo", "name": "Super Aggressivo",         "capital": 925,  "weeklyPnL": -925, "currency": "EUR" }
+    { "id": "conservativo",    "name": "Sistema Conservativo",     "capital": 1736, "weeklyPnL": 80,   "monthlyPnL": 80,   "currency": "EUR" },
+    { "id": "alto1",           "name": "Strumento Alto Rischio 1", "capital": 4156, "weeklyPnL": -626, "monthlyPnL": -626, "currency": "EUR" },
+    { "id": "alto2",           "name": "Strumento Alto Rischio 2", "capital": 3509, "weeklyPnL": 894,  "monthlyPnL": 894,  "currency": "EUR" },
+    { "id": "superaggressivo", "name": "Super Aggressivo",         "capital": 925,  "weeklyPnL": -925, "monthlyPnL": -925, "currency": "EUR" }
   ],
   "vanStats": {
     "totalKm": 3454,

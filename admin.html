@@ -287,6 +287,14 @@
       </div>
     </div>
 
+    <!-- RESET MESE -->
+    <div style="display:flex; align-items:center; gap:10px; margin: -4px 0 12px; padding: 10px 14px; background:#1a0a00; border:2px solid #6a3800; border-radius:8px;">
+      <input type="checkbox" id="reset-month" style="width:18px;height:18px;cursor:pointer;accent-color:var(--yellow);">
+      <label for="reset-month" style="cursor:pointer; font-size:0.85rem; color:#ffaa44;">
+        🔄 Nuovo mese — azzera P&L mensile prima di aggiungere questa settimana
+      </label>
+    </div>
+
     <!-- SPESE -->
     <div class="card">
       <div class="card-title">🚐 Spese van settimanali (€)</div>
@@ -472,11 +480,14 @@
         alto2:           ['s-alto2-cap',   's-alto2-pnl'],
         superaggressivo: ['s-superagg-cap','s-superagg-pnl'],
       };
+      const resetMonth = document.getElementById('reset-month').checked;
       (updated.systems || []).forEach(sys => {
         const ids = sysMap[sys.id];
         if (!ids) return;
+        const newPnL  = n(ids[1]);
         sys.capital   = n(ids[0]);
-        sys.weeklyPnL = n(ids[1]);
+        sys.weeklyPnL = newPnL;
+        sys.monthlyPnL = resetMonth ? newPnL : (sys.monthlyPnL || 0) + newPnL;
       });
 
       // Spese (copia amount → previousAmount prima di aggiornare)
