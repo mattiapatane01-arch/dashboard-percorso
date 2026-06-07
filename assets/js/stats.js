@@ -94,7 +94,7 @@ function buildExpenseBar(e, total) {
   } else {
     const sign = delta >= 0 ? '+' : '';
     tipValue.textContent = `${sign}${delta.toFixed(0)} ${e.currency}`;
-    tipValue.className = delta > 0 ? 'tip--up' : delta < 0 ? 'tip--down' : '';
+    tipValue.className = delta > 0 ? 'tip--down' : delta < 0 ? 'tip--up' : '';
   }
 
   tip.append(tipLabel, tipValue);
@@ -118,9 +118,10 @@ export function renderSystems(systems) {
   const container = document.getElementById('stats-systems');
   if (!container) return;
 
-  const totalCapital = systems.reduce((s, sys) => s + (sys.capital || 0) + (sys.weeklyPnL || 0), 0);
-  const totalPnL     = systems.reduce((s, sys) => s + (sys.weeklyPnL || 0), 0);
-  const currency     = systems[0]?.currency || 'EUR';
+  const totalCapital    = systems.reduce((s, sys) => s + (sys.capital || 0) + (sys.weeklyPnL || 0), 0);
+  const totalPnL        = systems.reduce((s, sys) => s + (sys.weeklyPnL || 0), 0);
+  const totalMonthlyPnL = systems.reduce((s, sys) => s + (sys.monthlyPnL || 0), 0);
+  const currency        = systems[0]?.currency || 'EUR';
 
   const col = document.createElement('div');
   col.className = 'stats-col';
@@ -138,7 +139,29 @@ export function renderSystems(systems) {
   totalValue.id = 'systems-total-value';
   totalValue.textContent = `0 ${currency}`;
 
-  totalWrap.append(totalLabel, totalValue);
+  // Tooltip "Da inizio mese" sul totale
+  const mSign  = totalMonthlyPnL >= 0 ? '+' : '';
+  const mPct   = totalCapital > 0 ? (totalMonthlyPnL / totalCapital * 100).toFixed(1) : '0.0';
+  const mPctSign = totalMonthlyPnL >= 0 ? '+' : '';
+  const totalTip = document.createElement('div');
+  totalTip.className = 'xp-tooltip';
+  totalTip.setAttribute('hidden', '');
+  const totalTipLabel = document.createElement('span');
+  totalTipLabel.textContent = 'Da inizio mese';
+  const totalTipVal = document.createElement('strong');
+  totalTipVal.textContent = `${mSign}${totalMonthlyPnL} ${currency} (${mPctSign}${mPct}%)`;
+  totalTipVal.className = totalMonthlyPnL > 0 ? 'tip--profit' : totalMonthlyPnL < 0 ? 'tip--loss' : '';
+  totalTip.append(totalTipLabel, totalTipVal);
+
+  totalWrap.style.cursor = 'pointer';
+  totalWrap.style.position = 'relative';
+  totalWrap.append(totalLabel, totalValue, totalTip);
+
+  totalWrap.addEventListener('click', e => {
+    e.stopPropagation();
+    totalTip.hasAttribute('hidden') ? totalTip.removeAttribute('hidden') : totalTip.setAttribute('hidden', '');
+  });
+  document.addEventListener('click', () => totalTip.setAttribute('hidden', ''));
 
   // Badge P&L totale
   const pnlBadgeEl = totalPnL !== 0 ? (() => {
@@ -277,7 +300,7 @@ function buildSystemCard(sys) {
   const tipValue = document.createElement('strong');
   const mp = sys.monthlyPnL ?? 0;
   tipValue.textContent = `${mp >= 0 ? '+' : ''}${mp} ${sys.currency}`;
-  tipValue.className = mp > 0 ? 'tip--up' : mp < 0 ? 'tip--down' : '';
+  tipValue.className = mp > 0 ? 'tip--profit' : mp < 0 ? 'tip--loss' : '';
   tip.append(tipLabel, tipValue);
 
   card.append(header, track, amountRow, tip);
