@@ -228,12 +228,10 @@
 <!-- ADMIN PANEL -->
 <div id="admin-panel">
 
-  <!-- API KEY BAR -->
+  <!-- GITHUB TOKEN BAR -->
   <div class="apikey-bar">
-    <label>Anthropic</label>
-    <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" oninput="saveApiKey()" style="max-width:220px;">
-    <label style="margin-left:8px;">GitHub</label>
-    <input type="password" id="gh-token-input" placeholder="github_pat_..." autocomplete="off" oninput="saveGhKey()" style="max-width:220px;">
+    <label>GitHub</label>
+    <input type="password" id="gh-token-input" placeholder="github_pat_..." autocomplete="off" oninput="saveGhKey()" style="max-width:280px;">
     <span class="apikey-saved" id="key-saved">✓</span>
   </div>
 
@@ -364,10 +362,6 @@
   });
 
   // ── API KEYS ──────────────────────────────────────────────
-  function saveApiKey() {
-    sessionStorage.setItem('adminKey', document.getElementById('api-key-input').value);
-    flashSaved();
-  }
   function saveGhKey() {
     sessionStorage.setItem('ghKey', document.getElementById('gh-token-input').value);
     flashSaved();
@@ -380,8 +374,6 @@
 
   // ── INIT ──────────────────────────────────────────────────
   async function init() {
-    const saved = sessionStorage.getItem('adminKey');
-    if (saved) document.getElementById('api-key-input').value = saved;
     const ghSaved = sessionStorage.getItem('ghKey');
     if (ghSaved) document.getElementById('gh-token-input').value = ghSaved;
 
@@ -435,63 +427,45 @@
   function s(id) { return document.getElementById(id).value.trim(); }
 
   // ── UPDATE ────────────────────────────────────────────────
-  async function updateData() {
-    const apiKey = document.getElementById('api-key-input').value.trim();
-    if (!apiKey)      { setStatus('error', 'Inserisci la API Key Anthropic'); return; }
+  function updateData() {
     if (!currentData) { setStatus('error', 'data.json non ancora caricato'); return; }
 
-    const btn = document.getElementById('update-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Chiamata API in corso...';
-    setStatus('info', 'Contatto Claude API…');
     document.getElementById('output-area').style.display = 'none';
 
     try {
-      const instructions = buildInstructions();
-      const prompt = `Sei un assistente che aggiorna file JSON.
-Ricevi il data.json attuale e una lista di aggiornamenti da applicare.
-Restituisci SOLO il JSON aggiornato, valido, senza markdown, senza \`\`\`, senza nessun testo aggiuntivo prima o dopo.
+      const updated = JSON.parse(JSON.stringify(currentData)); // deep clone
 
-DATA.JSON ATTUALE:
-${JSON.stringify(currentData, null, 2)}
+      // Meta
+      updated.meta.lastUpdated = s('meta-date');
 
-AGGIORNAMENTI DA APPLICARE:
-${instructions}
-
-Regole:
-- Mantieni tutti i campi esistenti non menzionati sopra invariati
-- Per vanStats.weeklyExpenses: prima di aggiornare amount, copia il vecchio amount in previousAmount
-- Restituisci il JSON completo e valido`;
-
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-clients': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 4096,
-          messages: [{ role: 'user', content: prompt }]
-        })
+      // Sistemi
+      const sysMap = {
+        conservativo:    ['s-cons-cap',    's-cons-pnl'],
+        alto1:           ['s-alto1-cap',   's-alto1-pnl'],
+        alto2:           ['s-alto2-cap',   's-alto2-pnl'],
+        superaggressivo: ['s-superagg-cap','s-superagg-pnl'],
+      };
+      (updated.systems || []).forEach(sys => {
+        const ids = sysMap[sys.id];
+        if (!ids) return;
+        sys.capital   = n(ids[0]);
+        sys.weeklyPnL = n(ids[1]);
       });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err?.error?.message || `HTTP ${res.status}`);
-      }
+      // Spese (copia amount → previousAmount prima di aggiornare)
+      const expMap = { Benzina:'e-benzina', Cibo:'e-cibo', 'AI Tools':'e-ai', Altro:'e-altro' };
+      (updated.vanStats?.weeklyExpenses || []).forEach(exp => {
+        const id = expMap[exp.category];
+        if (!id) return;
+        exp.previousAmount = exp.amount;
+        exp.amount = n(id);
+      });
 
-      const result = await res.json();
-      const raw = result.content?.[0]?.text || '';
+      // Km e Telegram
+      updated.vanStats.totalKm    = n('total-km');
+      updated.telegram.subscribers = n('tg-subs');
 
-      // Estrai il JSON dalla risposta (rimuovi eventuale markdown)
-      const match = raw.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error('Claude non ha restituito JSON valido. Risposta: ' + raw.slice(0, 200));
-
-      const parsed = JSON.parse(match[0]);
-      resultJSON = JSON.stringify(parsed, null, 2);
+      resultJSON = JSON.stringify(updated, null, 2);
 
       document.getElementById('json-output').value = resultJSON;
       document.getElementById('output-area').style.display = 'block';
@@ -501,30 +475,7 @@ Regole:
 
     } catch (e) {
       setStatus('error', 'Errore: ' + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '⚡ Aggiorna Dashboard';
     }
-  }
-
-  function buildInstructions() {
-    const lines = [];
-    lines.push(`- meta.lastUpdated = "${s('meta-date')}"`);
-    lines.push(`- systems[id=conservativo].capital = ${n('s-cons-cap')}`);
-    lines.push(`- systems[id=conservativo].weeklyPnL = ${n('s-cons-pnl')}`);
-    lines.push(`- systems[id=alto1].capital = ${n('s-alto1-cap')}`);
-    lines.push(`- systems[id=alto1].weeklyPnL = ${n('s-alto1-pnl')}`);
-    lines.push(`- systems[id=alto2].capital = ${n('s-alto2-cap')}`);
-    lines.push(`- systems[id=alto2].weeklyPnL = ${n('s-alto2-pnl')}`);
-    lines.push(`- systems[id=superaggressivo].capital = ${n('s-superagg-cap')}`);
-    lines.push(`- systems[id=superaggressivo].weeklyPnL = ${n('s-superagg-pnl')}`);
-    lines.push(`- vanStats.totalKm = ${n('total-km')}`);
-    lines.push(`- vanStats.weeklyExpenses[Benzina].amount = ${n('e-benzina')} (salva vecchio amount in previousAmount)`);
-    lines.push(`- vanStats.weeklyExpenses[Cibo].amount = ${n('e-cibo')} (salva vecchio amount in previousAmount)`);
-    lines.push(`- vanStats.weeklyExpenses[AI Tools].amount = ${n('e-ai')} (salva vecchio amount in previousAmount)`);
-    lines.push(`- vanStats.weeklyExpenses[Altro].amount = ${n('e-altro')} (salva vecchio amount in previousAmount)`);
-    lines.push(`- telegram.subscribers = ${n('tg-subs')}`);
-    return lines.join('\n');
   }
 
   // ── GITHUB PUSH ───────────────────────────────────────────

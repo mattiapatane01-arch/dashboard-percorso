@@ -1,6 +1,6 @@
 {
   "meta": {
-    "lastUpdated": "2026-05-31",
+    "lastUpdated": "2026-06-07",
     "version": "1.0"
   },
   "hero": {
@@ -25,18 +25,18 @@
     ]
   },
   "systems": [
-    { "id": "conservativo",    "name": "Sistema Conservativo",     "capital": 1740, "weeklyPnL": -21,  "currency": "EUR" },
-    { "id": "alto1",           "name": "Strumento Alto Rischio 1", "capital": 4156, "weeklyPnL": 320,  "currency": "EUR" },
-    { "id": "alto2",           "name": "Strumento Alto Rischio 2", "capital": 3509, "weeklyPnL": -15,  "currency": "EUR" },
-    { "id": "superaggressivo", "name": "Super Aggressivo",         "capital": 925,  "weeklyPnL": 425,  "currency": "EUR" }
+    { "id": "conservativo",    "name": "Sistema Conservativo",     "capital": 1736, "weeklyPnL": 80,   "currency": "EUR" },
+    { "id": "alto1",           "name": "Strumento Alto Rischio 1", "capital": 4156, "weeklyPnL": -626, "currency": "EUR" },
+    { "id": "alto2",           "name": "Strumento Alto Rischio 2", "capital": 3509, "weeklyPnL": 894,  "currency": "EUR" },
+    { "id": "superaggressivo", "name": "Super Aggressivo",         "capital": 925,  "weeklyPnL": -925, "currency": "EUR" }
   ],
   "vanStats": {
-    "totalKm": 3200,
+    "totalKm": 3454,
     "weeklyExpenses": [
-      { "category": "Benzina",  "amount": 32, "previousAmount": 0, "currency": "EUR", "emoji": "⛽" },
-      { "category": "Cibo",     "amount": 78, "previousAmount": 0, "currency": "EUR", "emoji": "🍜" },
-      { "category": "AI Tools", "amount": 0,  "previousAmount": 0, "currency": "EUR", "emoji": "🤖" },
-      { "category": "Altro",    "amount": 41, "previousAmount": 0, "currency": "EUR", "emoji": "📦" }
+      { "category": "Benzina",  "amount": 46, "previousAmount": 32, "currency": "EUR", "emoji": "⛽" },
+      { "category": "Cibo",     "amount": 26, "previousAmount": 78, "currency": "EUR", "emoji": "🍜" },
+      { "category": "AI Tools", "amount": 0,  "previousAmount": 0,  "currency": "EUR", "emoji": "🤖" },
+      { "category": "Altro",    "amount": 72, "previousAmount": 41, "currency": "EUR", "emoji": "📦" }
     ]
   },
   "resources": {
@@ -59,7 +59,7 @@
     ]
   },
   "telegram": {
-    "subscribers": 799,
+    "subscribers": 806,
     "url": "https://t.me/+86NBUJK6mxoxNGU0",
     "systemProgress": 25
   },
